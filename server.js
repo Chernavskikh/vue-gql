@@ -4,46 +4,20 @@ const User = require('./models/User');
 const Post = require('./models/Post');
 require('dotenv').config({ path: 'variables.env'});
 
+const fs = require('fs');
+const path = require('path');
+
+const filePath = path.join(__dirname, 'typeDefs.graphql');
+const typeDefs = fs.readFileSync(filePath, 'utf-8');
+const resolvers = require('./resolvers');
+
 mongoose
-    .connect(process.env.MONGO_URI)
+    .connect(
+        process.env.MONGO_URI,
+        { useUnifiedTopology: true, useNewUrlParser: true },
+    )
     .then(() => { console.log('DB connected')})
     .catch((err) => console.log(err));
-
-
-const todos = [
-    { task: 'Wash car', completed: false },
-    { task: 'Clean room', completed: true }
-];
-// The GraphQL schema
-const typeDefs = gql`
-
-    type Todo {
-        task: String
-        completed: Boolean
-    }
-    
-    type Query {
-        getTodos: [Todo]
-    }
-    
-    type Mutation {
-        addTodo(task: String, completed: Boolean): Todo
-    }
-`;
-
-// A map of functions which return data for the schema.
-const resolvers = {
-    Query: {
-        getTodos: () => todos,
-    },
-    Mutation: {
-        addTodo: (_, args) => {
-            const todo = {task: args.task, completed: args.completed };
-            todos.push(todo);
-            return todo;
-        }
-    },
-};
 
 const server = new ApolloServer({
     typeDefs,
