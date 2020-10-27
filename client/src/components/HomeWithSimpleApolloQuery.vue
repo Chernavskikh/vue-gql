@@ -1,16 +1,13 @@
 <template>
-  <v-container v-if="getPosts">
-    <v-flex xs12>
-      <v-carousel>
-        <v-carousel-item
-            v-for="post in getPosts"
-            :key="post._id"
-            :src="post.imageUrl">
-          <h1>{{post.title}}</h1>
-          <p>{{post.description}}</p>
-        </v-carousel-item>
-      </v-carousel>
-    </v-flex>
+  <v-container>
+    <h1 class="text-left">Home</h1>
+    <div v-if="$apollo.loading">Loading...</div>
+    <ul v-else v-for="post in getPosts" :key="post._id">
+      <li>
+        {{post.title}}
+        {{post.description}}
+      </li>
+    </ul>
   </v-container>
 </template>
 
@@ -18,6 +15,11 @@
 import { gql } from 'apollo-boost';
 export default {
   name: 'Home',
+  data() {
+    return {
+      posts: [],
+    };
+  },
   apollo: {
     getPosts: {
       query: gql`
@@ -26,7 +28,6 @@ export default {
             _id
             title
             description
-            imageUrl
            }
         }`,
       result({data, loading, networkStatus}) {
@@ -41,8 +42,3 @@ export default {
   },
 }
 </script>
-<style scoped>
->>> .v-responsive__content {
-  padding: 40px;
-}
-</style>

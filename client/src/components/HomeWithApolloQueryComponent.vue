@@ -1,16 +1,16 @@
 <template>
-  <v-container v-if="getPosts">
-    <v-flex xs12>
-      <v-carousel>
-        <v-carousel-item
-            v-for="post in getPosts"
-            :key="post._id"
-            :src="post.imageUrl">
-          <h1>{{post.title}}</h1>
-          <p>{{post.description}}</p>
-        </v-carousel-item>
-      </v-carousel>
-    </v-flex>
+  <v-container>
+    <h1 class="text-left">Home</h1>
+    <ApolloQuery :query="getPostsQuery" notifyOnNetworkStatusChange>
+      <template slot-scope="{ result: { loading, data, error }}">
+        <div v-if="loading">...loading</div>
+        <div v-else-if="error">Error! {{error.message}}</div>
+        <ul v-else v-for="post in data.getPosts" :key="post._id">
+          <li>{{post.title}}</li>
+          <li>{{post.description}}</li>
+        </ul>
+      </template>
+    </ApolloQuery>
   </v-container>
 </template>
 
@@ -26,7 +26,6 @@ export default {
             _id
             title
             description
-            imageUrl
            }
         }`,
       result({data, loading, networkStatus}) {
@@ -41,8 +40,3 @@ export default {
   },
 }
 </script>
-<style scoped>
->>> .v-responsive__content {
-  padding: 40px;
-}
-</style>
