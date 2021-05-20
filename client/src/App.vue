@@ -46,9 +46,22 @@
 
         <!-- Horizontal navbar links-->
         <v-toolbar-items>
-          <v-btn text v-for="item in HorizontalMenuItems" :key="item.title" :to="item.link">
+          <v-btn text v-for="item in horizontalMenuItems" :key="item.title" :to="item.link">
             <v-icon class="hidden-sm-and-down" left>{{item.icon}}</v-icon>
             {{item.title}}
+          </v-btn>
+
+          <v-btn text to="/profile" v-if="user">
+            <v-icon class="hidden-sm-only" left>account_box</v-icon>
+            <v-badge right color="blue darken-2">
+<!--              <span slot="badge">1</span>-->
+              Profile
+            </v-badge>
+          </v-btn>
+
+          <v-btn text v-if="user" @click="handleSignout">
+            <v-icon class="hidden-sm-only" left>exit_to_app</v-icon>
+            Signout
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
@@ -64,50 +77,95 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   name: 'App',
 
   data: () => ({
     sideNav: false,
-    HorizontalMenuItems: [
-      {
-        icon: 'chat',
-        title: 'Posts',
-        link: '/posts',
-      },
-      {
-        icon: 'lock_open',
-        title: 'Sign In',
-        link: '/signin',
-      },
-      {
-        icon: 'create',
-        title: 'Sign Up',
-        link: '/signup',
-      }
-    ],
-    sideNavItems: [
-      {
-        icon: 'chat',
-        title: 'Posts',
-        link: '/posts',
-      },
-      {
-        icon: 'lock_open',
-        title: 'Sign In',
-        link: '/signin',
-      },
-      {
-        icon: 'create',
-        title: 'Sign Up',
-        link: '/signup',
-      }
-    ],
   }),
+  computed: {
+    sideNavItems() {
+      let items = [
+        {
+          icon: 'chat',
+          title: 'Posts',
+          link: '/posts',
+        },
+        {
+          icon: 'lock_open',
+          title: 'Sign In',
+          link: '/signin',
+        },
+        {
+          icon: 'create',
+          title: 'Sign Up',
+          link: '/signup',
+        }
+      ]
+
+      if (this.user) {
+        items = [
+          {
+            icon: 'chat',
+            title: 'Posts',
+            link: '/posts',
+          },
+          {
+            icon: 'stars',
+            title: 'Create Post',
+            link: '/post/add',
+          },
+          {
+            icon: 'account',
+            title: 'Profile',
+            link: '/profile',
+          },
+        ]
+
+        return items
+      }
+    },
+    horizontalMenuItems() {
+      let items = [
+        {
+          icon: 'chat',
+          title: 'Posts',
+          link: '/posts',
+        },
+        {
+          icon: 'lock_open',
+          title: 'Sign In',
+          link: '/signin',
+        },
+        {
+          icon: 'create',
+          title: 'Sign Up',
+          link: '/signup',
+        }
+      ]
+
+      if (this.user) {
+        items = [
+          {
+            icon: 'chat',
+            title: 'Posts',
+            link: '/posts',
+          },
+        ]
+      }
+
+      return items
+    },
+    ...mapGetters(['user'])
+  },
   methods: {
     toggleSideNav() {
       this.sideNav = !this.sideNav;
-    }
+    },
+    handleSignout() {
+      this.$store.dispatch('signoutUser')
+    },
   },
 };
 </script>

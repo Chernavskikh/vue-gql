@@ -12,6 +12,7 @@ type User {
 type Query {
     getUser: User
     getPosts: [Post]
+    getCurrentUser: User
 }
 
 type Post {
